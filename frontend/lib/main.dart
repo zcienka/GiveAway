@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:give_away/pages/login_register.dart';
+import 'package:give_away/pages/home_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -8,6 +9,7 @@ void main() {
         colorScheme: const ColorScheme.light().copyWith(
             brightness: Brightness.light,
             primary: const Color(0xff3585FD),
+            onPrimaryContainer: const Color(0xffE9E7EE),
             onError: const Color(0xffFD4135),
             background: const Color(0xfff3f3f3),
             onBackground: const Color(0xff0F0F0F),
@@ -27,7 +29,7 @@ void main() {
           bodyColor: const Color(0xff0F0F0F),
         ),
       ),
-      home: const Register()));
+      home: const HomePage()));
 }
 
 

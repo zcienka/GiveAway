@@ -1,7 +1,7 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-   final String fieldName;
+  final String fieldName;
 
   const CustomTextField({super.key, required this.fieldName});
 
@@ -11,7 +11,7 @@ class CustomTextField extends StatelessWidget {
       children: [
         Container(
             margin: const EdgeInsets.symmetric(vertical: 8.0),
-            child:  Align(
+            child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   fieldName,
