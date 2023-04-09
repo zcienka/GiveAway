@@ -8,7 +8,7 @@ Market place mobile app written in Flutter where you can give away items for fre
 * Express.js
 
 ## Todo:
-- [ x ] Add user authentication and authorization on backend
+- [x] Add user authentication and authorization on backend
 - [ ] Add user authentication and authorization on frontend
 - [ ] Fetch data from an API
 - [ ] Add google authentication
