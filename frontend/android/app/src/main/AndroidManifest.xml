@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.give_away">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="give_away"
         android:name="${applicationName}"
