@@ -1,20 +1,16 @@
-const asyncWrapper = (fn) => {
-    return async (req, res, next) => {
-        try {
-            await fn(req, res, next);
-        } catch (error) {
-            next(error);
-        }
-    };
-};
+const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
-    if (req.session.isAuth) {
-        next();
-    } else {
-        req.session.error = "You have to Login first";
-        res.redirect("/login");
+const asyncWrapper = (handler) => async (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        req.user = decoded;
+        handler(req, res, next);
+    } catch (err) {
+        res.status(401).json({ message: 'Unauthorized' });
     }
 };
+const express = require("express");
+const app = express();
 
 module.exports = asyncWrapper;

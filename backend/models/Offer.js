@@ -1,9 +1,19 @@
 const mongoose = require('mongoose')
 
 const OfferSchema = new mongoose.Schema({
-  name: {
-    type: String,
-  },
+    title: {
+        type: String,
+    },
+    description: {
+        type: String,
+    },
+    stars: {
+        type: Array,
+        default: []
+    },
+    img: {
+        type: String
+    }
 })
 
 module.exports = mongoose.model('Offer', OfferSchema)
