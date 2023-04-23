@@ -11,6 +11,7 @@ class Register extends StatelessWidget {
         .of(context)
         .size
         .height;
+
     final width = MediaQuery
         .of(context)
         .size
@@ -24,7 +25,7 @@ class Register extends StatelessWidget {
                     .colorScheme
                     .background,
                 padding: EdgeInsets.symmetric(
-                    vertical: height * 0.10, horizontal: width * 0.05),
+                    vertical: height * 0.10, horizontal: 8),
                 child: Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 24.0),

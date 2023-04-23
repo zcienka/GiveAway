@@ -9,15 +9,13 @@ const connectDB = require("./db/connect");
 
 require("dotenv").config();
 
-
-
-
 app.use(express.json());
 
 app.use("/api/v1/offers", offers);
 app.use("/api/v1/auth", auth);
 
 const port = process.env.PORT || 5000;
+app.use('/images', express.static('images'));
 
 const start = async () => {
     try {
