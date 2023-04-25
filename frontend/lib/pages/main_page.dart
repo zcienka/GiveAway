@@ -32,7 +32,7 @@ class _MainPageState extends State<MainPage> {
     final response = await http.get(
       Uri.parse('http://10.0.2.2:8000/api/v1/offers'),
       headers: {
-        HttpHeaders.authorizationHeader: 'Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImR1YXAiLCJpYXQiOjE2ODIyODA1MTMsImV4cCI6MTY4MjM4MDUxM30.Whvmn8m0M5XvgNJL_lu9ZpuYjuyxCGlQVajfSGjgr1M',
+        HttpHeaders.authorizationHeader: 'Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImR1YXAiLCJpYXQiOjE2ODI0NTI1NzIsImV4cCI6MTY4MjU1MjU3Mn0.D4akATXFGi_RJFNFjFpqlWpRzeyuVCTZw9FG7R1J-Q4',
       },
     );
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/Offer.dart';
+import '../pages/offer_detail_page.dart';
 
 class CustomItem extends StatelessWidget {
   final Offer? offer;
@@ -10,7 +11,6 @@ class CustomItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = offer?.title ?? '';
     final location = offer?.location ?? '';
-
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -33,18 +33,28 @@ class CustomItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (offer?.img != null)
-              SizedBox(
-                width: double.infinity,
-                height: 240,
-                child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OfferDetailPage(offer!),
                     ),
-                    child: Image.network(
-                      offer?.img ?? '',
-                      fit: BoxFit.cover,
-                    )),
+                  );
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 240,
+                  child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
+                      child: Image.network(
+                        offer?.img ?? '',
+                        fit: BoxFit.cover,
+                      )),
+                ),
               ),
             // Text(text),
             Expanded(

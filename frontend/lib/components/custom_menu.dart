@@ -11,7 +11,6 @@ class CustomMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-
     return Container(
       height: 72.0,
       decoration: BoxDecoration(
