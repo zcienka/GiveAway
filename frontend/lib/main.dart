@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:give_away/pages/login_register.dart';
 import 'package:give_away/pages/home_page.dart';
+import 'package:flutter/services.dart';
 
 void main() {
-  //            brightness: Brightness.light,
   final ThemeData base = ThemeData.light();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarColor: Colors.black),
+  );
 
-  runApp( MaterialApp(
+  runApp(MaterialApp(
       home: Theme(
-
     data: ThemeData(
       fontFamily: 'Inter',
-
-      colorScheme:  base.colorScheme.copyWith(
+      colorScheme: base.colorScheme.copyWith(
           primary: const Color(0xff3585FD),
           onPrimaryContainer: const Color(0xffE9E7EE),
           onError: const Color(0xffFD4135),
@@ -22,8 +23,7 @@ void main() {
           secondary: const Color(0xff7A7A7A),
           tertiary: const Color(0xfff9f9f9),
           outline: const Color(0xffD5D5D5),
-          // outlineVariant: const Color(0xff878787)
-          outlineVariant: const Color(0xffFD4135)),
+          outlineVariant: const Color(0xff878787)),
       textTheme: const TextTheme(
               displayLarge:
                   TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
@@ -35,9 +35,6 @@ void main() {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-
     child: const HomePage(),
-
-    // home: const HomePage())
   )));
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:give_away/pages/main_page.dart';
-// import 'package:give_away/pages/login_register.dart';
+import '../components/custom_menu.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,6 +9,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
         body: SafeArea(child:
-        MainPage()));
+        MainPage()
+
+        ),
+        bottomNavigationBar: CustomMenu());
   }
 }

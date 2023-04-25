@@ -38,24 +38,30 @@ const createOffer = asyncWrapper(async (req, res, next) => {
     const title = req.body.title;
     const description = req.body.description;
     const img = req.body.img;
+    const location = req.body.location;
 
     try {
         if (!title) {
-            return res.status(400).json("Offer must have a title");
+            return res.status(400).json("Offer must have a title.");
         }
 
         if (!description) {
-            return res.status(400).json("Offer must have a description");
+            return res.status(400).json("Offer must have a description.");
         }
 
         if (!img) {
-            return res.status(400).json("Offer must have an image");
+            return res.status(400).json("Offer must have an image.");
+        }
+
+        if (!location) {
+            return res.status(400).json("Offer must have a location.");
         }
 
         const newOffer = await Offer.create({
             title: title,
             description: description,
-            img: img
+            img: img,
+            location: location,
         });
 
         return res.status(201).json(newOffer);

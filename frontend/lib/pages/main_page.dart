@@ -1,12 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../components/Offer.dart';
+import '../models/Offer.dart';
 import 'package:logger/logger.dart';
-
 import '../components/custom_item.dart';
+import '../components/custom_item_list.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,7 +15,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  late Future<Offer> futureOffer;
+  late Future<List<Offer>> futureOffer;
 
   @override
   void initState() {
@@ -29,7 +28,7 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  Future<Offer> fetchOffer() async {
+  Future<List<Offer>> fetchOffer() async {
     final response = await http.get(
       Uri.parse('http://10.0.2.2:8000/api/v1/offers'),
       headers: {
@@ -40,7 +39,7 @@ class _MainPageState extends State<MainPage> {
     final logger = Logger();
 
     if (response.statusCode == 200) {
-      return Offer.fromJson(jsonDecode(response.body)[0]);
+      return Offer.fromJsonArray(jsonDecode(response.body));
     } else {
       throw Exception(jsonDecode(response.body));
     }
@@ -50,12 +49,11 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-          child: FutureBuilder<Offer>(
+          child: FutureBuilder<List<Offer>>(
             future: futureOffer,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return CustomItem(snapshot.data!.title, snapshot.data!.img);
-                // return const CustomItem();
+                return CustomItemList(snapshot.data!);
               }
               // else if (snapshot.hasError) {
               // }
