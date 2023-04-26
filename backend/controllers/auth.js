@@ -21,7 +21,9 @@ const registerUser = async (req, res) => {
 
         const user = await newUser.save();
 
-        return res.status(200).json(user);
+        const token = jwt.sign({username: newUser.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '100000s'});
+
+        return res.status(201).json(token);
     } catch (err) {
         return res.status(500).json(err);
     }
@@ -42,7 +44,7 @@ const loginUser = async (req, res) => {
 
         const token = jwt.sign({username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '100000s'});
 
-        return res.status(200).json({user, token});
+        return res.status(200).json(token);
 
     } catch (err) {
         return res.status(500).json(err);

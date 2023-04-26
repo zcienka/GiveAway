@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../pages/custom_map.dart';
+
 class CustomFindOnMapButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,12 @@ class CustomFindOnMapButton extends StatelessWidget {
           ButtonBar(
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CustomMap()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   fixedSize: const Size(180, 48),
                   shape: RoundedRectangleBorder(

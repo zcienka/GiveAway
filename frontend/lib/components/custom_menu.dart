@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:give_away/models/Offer.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class CustomMenu extends StatelessWidget {
   const CustomMenu({Key? key}) : super(key: key);
@@ -7,6 +9,7 @@ class CustomMenu extends StatelessWidget {
   // const CustomMenu({required this.onPressed});
 
   // final Function() onPressed;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -23,9 +26,9 @@ class CustomMenu extends StatelessWidget {
         children: [
           Expanded(
             child: IconButton(
-              onPressed: () {},
               icon: const Icon(Icons.search, size: 32.0),
               color: Colors.black.withOpacity(0.5),
+              onPressed: () {},
             ),
           ),
           SizedBox(

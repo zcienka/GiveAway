@@ -35,6 +35,6 @@ void main() {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-    child: const HomePage(),
+    child:  Register(),
   )));
 }

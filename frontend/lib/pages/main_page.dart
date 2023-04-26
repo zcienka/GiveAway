@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/Offer.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import '../components/custom_item.dart';
 import '../components/custom_item_list.dart';
 
@@ -17,15 +17,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   late Future<List<Offer>> futureOffer;
 
+
   @override
   void initState() {
     super.initState();
     futureOffer = fetchOffer();
-    final logger = Logger();
 
-    futureOffer.then((offer) {
-      logger.i(offer);
-    });
   }
 
   Future<List<Offer>> fetchOffer() async {
@@ -36,7 +33,6 @@ class _MainPageState extends State<MainPage> {
       },
     );
 
-    final logger = Logger();
 
     if (response.statusCode == 200) {
       return Offer.fromJsonArray(jsonDecode(response.body));
@@ -47,6 +43,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: Center(
           child: FutureBuilder<List<Offer>>(
