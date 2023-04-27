@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:give_away/pages/login_register.dart';
 import 'package:give_away/pages/home_page.dart';
 import 'package:flutter/services.dart';
+import 'package:give_away/pages/main_page.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: "assets/.env");
   final ThemeData base = ThemeData.light();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.black),
@@ -35,6 +38,6 @@ void main() {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-    child:  Register(),
+    child: Register(),
   )));
 }

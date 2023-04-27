@@ -1,22 +1,34 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:give_away/components/custom_textfield.dart';
 import 'package:give_away/components/custom_button.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logging/logging.dart';
 import 'package:http/http.dart' as http;
+import 'main_page.dart';
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
+  Register({super.key});
 
-   Register({super.key});
+  @override
+  State<Register> createState() => _RegisterState();
+}
 
-  // get http => null;
+class _RegisterState extends State<Register> {
   final http.Client httpClient = http.Client();
 
-  Future<String> createUser(String username, String password) async {
+  final httpAddress = dotenv.env['HTTP_ADDRESS'];
+
+  TextEditingController email = TextEditingController();
+
+  TextEditingController password = TextEditingController();
+
+  TextEditingController repeatPassword = TextEditingController();
+
+  Future<void> createUser(
+      String username, String password, BuildContext context) async {
     final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/v1/auth/register'),
+      Uri.parse('$httpAddress/api/v1/auth/register'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -27,9 +39,15 @@ class Register extends StatelessWidget {
     );
 
     if (response.statusCode == 201) {
-      return jsonDecode(response.body);
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'jwt-token', value: jsonDecode(response.body));
+      await Future.delayed(const Duration(seconds: 1));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
     } else {
-      throw Exception('Failed to create user.');
+      throw Exception('Failed to create the user.');
     }
   }
 
@@ -37,7 +55,6 @@ class Register extends StatelessWidget {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
-    const storage = FlutterSecureStorage();
 
     return Scaffold(
         body: Center(
@@ -96,15 +113,18 @@ class Register extends StatelessWidget {
                                 fontSize: 16,
                                 color:
                                     Theme.of(context).colorScheme.secondary)),
-                        const CustomTextField(fieldName: "Email"),
-                        const CustomTextField(fieldName: "Password"),
-                        const CustomTextField(fieldName: "Repeat password"),
-
+                        CustomTextField(fieldName: "Email", controller: email),
+                        CustomTextField(
+                            fieldName: "Password", controller: password),
+                        CustomTextField(
+                            fieldName: "Repeat password",
+                            controller: repeatPassword),
                         InkWell(
-                          child: IgnorePointer(child:  CustomButton(buttonName:"Register")),
-                            onTap: () {
-                              createUser("text", "text");
-                            },
+                          child: const IgnorePointer(
+                              child: CustomButton(buttonName: "Register")),
+                          onTap: () {
+                            createUser(email.text, password.text, context);
+                          },
                         ),
                         Container(
                           margin: const EdgeInsets.only(top: 16.0),

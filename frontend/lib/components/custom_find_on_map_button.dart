@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../pages/custom_map.dart';
 
 class CustomFindOnMapButton extends StatelessWidget {
+  const CustomFindOnMapButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(

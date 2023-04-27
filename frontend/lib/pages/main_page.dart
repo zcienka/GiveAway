@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/Offer.dart';
-import 'package:logging/logging.dart';
-import '../components/custom_item.dart';
 import '../components/custom_item_list.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:developer' as developer;
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,23 +17,34 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late Future<List<Offer>> futureOffer;
-
+  final storage = const FlutterSecureStorage();
+  var jwt = '';
 
   @override
   void initState() {
     super.initState();
     futureOffer = fetchOffer();
+    readFromStorage();
+  }
 
+  Future<void> readFromStorage() async {
+    String? value = await storage.read(key: 'jwt-token');
+
+    jwt = value!;
+    setState(() {
+      futureOffer = fetchOffer();
+    });
   }
 
   Future<List<Offer>> fetchOffer() async {
+    final httpAddress = dotenv.env['HTTP_ADDRESS'];
+
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/v1/offers'),
+      Uri.parse('$httpAddress/api/v1/offers'),
       headers: {
-        HttpHeaders.authorizationHeader: 'Basic eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImR1YXAiLCJpYXQiOjE2ODI0NTI1NzIsImV4cCI6MTY4MjU1MjU3Mn0.D4akATXFGi_RJFNFjFpqlWpRzeyuVCTZw9FG7R1J-Q4',
+        HttpHeaders.authorizationHeader: 'Basic $jwt',
       },
     );
-
 
     if (response.statusCode == 200) {
       return Offer.fromJsonArray(jsonDecode(response.body));
@@ -43,22 +55,21 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        body: Center(
-          child: FutureBuilder<List<Offer>>(
-            future: futureOffer,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return CustomItemList(snapshot.data!);
-              }
-              // else if (snapshot.hasError) {
-              // }
+      body: Center(
+        child: FutureBuilder<List<Offer>>(
+          future: futureOffer,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return CustomItemList(snapshot.data!);
+            }
+            // else if (snapshot.hasError) {
+            // }
 
-              return const CircularProgressIndicator();
-            },
-          ),
+            return const CircularProgressIndicator();
+          },
         ),
-      );
+      ),
+    );
   }
 }
