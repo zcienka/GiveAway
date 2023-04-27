@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:give_away/pages/custom_map.dart';
 import 'package:give_away/pages/login_register.dart';
 import 'package:give_away/pages/home_page.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +26,7 @@ void main() async {
           secondaryContainer: const Color(0xffEAE9E9),
           secondary: const Color(0xff7A7A7A),
           tertiary: const Color(0xfff9f9f9),
-          outline: const Color(0xffD5D5D5),
+          outline: const Color(0xffd6d6d6),
           outlineVariant: const Color(0xff878787)),
       textTheme: const TextTheme(
               displayLarge:
@@ -38,6 +39,6 @@ void main() async {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-    child: Register(),
+    child: const MainPage(),
   )));
 }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../models/Offer.dart';
 import '../pages/custom_map.dart';
+import '../components/custom_button.dart';
 
 class CustomFindOnMapButton extends StatelessWidget {
-  const CustomFindOnMapButton({super.key});
+  final Offer offer;
+
+  const CustomFindOnMapButton(this.offer, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,29 +20,19 @@ class CustomFindOnMapButton extends StatelessWidget {
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ButtonBar(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CustomMap()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(180, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
-                child: const Text('Find on map'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+        child: InkWell(
+          child: const IgnorePointer(child: CustomButton(buttonName: 'Find on map')),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CustomMap(offer.location),
               ),
-            ],
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }

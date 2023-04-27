@@ -41,7 +41,7 @@ class _RegisterState extends State<Register> {
     if (response.statusCode == 201) {
       const storage = FlutterSecureStorage();
       await storage.write(key: 'jwt-token', value: jsonDecode(response.body));
-      await Future.delayed(const Duration(seconds: 1));
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainPage()),
@@ -93,10 +93,10 @@ class _RegisterState extends State<Register> {
                                       Radius.circular(12),
                                     ),
                                     side: BorderSide(
-                                      width: 1,
-                                      color:
-                                          Theme.of(context).colorScheme.outline,
-                                    ),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                        width: 2.0),
                                   )),
                                 ),
                                 child: Text(

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:give_away/models/Offer.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class CustomMenu extends StatelessWidget {
   const CustomMenu({Key? key}) : super(key: key);
@@ -32,8 +29,8 @@ class CustomMenu extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 60.0,
-            height: 60.0,
+            width: 64.0,
+            height: 64.0,
             child: FloatingActionButton(
               // onPressed: onPressed,
               onPressed: () {},

@@ -15,7 +15,7 @@ class OfferDetailPage extends StatelessWidget {
           children: [
             SizedBox(
               width: double.infinity,
-              height: 280,
+              height: 240,
               child: ClipRRect(
                 child: Image.network(
                   offer.img ?? '',
@@ -23,12 +23,46 @@ class OfferDetailPage extends StatelessWidget {
                 ),
               ),
             ),
+            Positioned(
+              top: 24,
+              left: 24,
+              child: Container(
+                width: 54,
+                height: 54,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.12),
+                      spreadRadius: 24,
+                      blurRadius: 10,
+                      offset: const Offset(0, -3),
+                    ),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(1000.0),
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ),
             Container(
               width: double.infinity,
-              margin: const EdgeInsets.only(top: 240),
-              decoration: const BoxDecoration(
+              margin: const EdgeInsets.only(top: 200),
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 8,
+                    blurRadius: 10,
+                    offset: const Offset(0, -3),
+                  ),
+                ],
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -39,7 +73,7 @@ class OfferDetailPage extends StatelessWidget {
                     Text(
                       offer.title,
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 28,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -48,7 +82,7 @@ class OfferDetailPage extends StatelessWidget {
                       child: Text(
                         offer.location,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 20,
                           color: Colors.black54,
                           fontWeight: FontWeight.w700,
                         ),
@@ -80,7 +114,7 @@ class OfferDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: CustomFindOnMapButton(),
+      bottomNavigationBar: CustomFindOnMapButton(offer),
     );
   }
 }

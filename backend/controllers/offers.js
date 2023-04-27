@@ -3,14 +3,14 @@ const Offer = require('../models/Offer')
 const mongoose = require('mongoose')
 const asyncWrapper = require("../middleware/auth");
 
-const getAllOffers = async (req, res) => {
+const getAllOffers = asyncWrapper(async (req, res) => {
     try {
         const offer = await Offer.find();
         return res.status(200).json(offer);
     } catch (err) {
         return res.status(404).json({message: err.message});
     }
-}
+})
 
 const getOffer = async (req, res, next) => {
     const offerId = req.params.id;
