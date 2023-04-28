@@ -7,23 +7,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'main_page.dart';
 
-class Register extends StatefulWidget {
+class Register extends StatelessWidget {
   Register({super.key});
 
-  @override
-  State<Register> createState() => _RegisterState();
-}
-
-class _RegisterState extends State<Register> {
   final http.Client httpClient = http.Client();
 
   final httpAddress = dotenv.env['HTTP_ADDRESS'];
 
-  TextEditingController email = TextEditingController();
+  final TextEditingController email = TextEditingController();
 
-  TextEditingController password = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
-  TextEditingController repeatPassword = TextEditingController();
+  final TextEditingController repeatPassword = TextEditingController();
 
   Future<void> createUser(
       String username, String password, BuildContext context) async {

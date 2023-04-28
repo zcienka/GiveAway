@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:give_away/components/custom_button.dart';
+import 'package:give_away/pages/map/find_route.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,15 +12,20 @@ class CustomMap extends StatefulWidget {
   const CustomMap(this.cityName, {Key? key}) : super(key: key);
 
   @override
-  State<CustomMap> createState() => _CustomMapState(cityName);
+  State<CustomMap> createState() => _CustomMapState();
 }
 
 class _CustomMapState extends State<CustomMap> {
   LatLng? cityLocation;
-  final String cityName;
+  String cityName = '';
   late Future<LatLng> futureCityLocation;
 
-  _CustomMapState(this.cityName);
+  // _CustomMapState(this.cityName);
+  @override
+  void initState() {
+    super.initState();
+    cityName = widget.cityName;
+  }
 
   Future<LatLng> getCityLocation(String cityName) async {
     final response = await http.get(Uri.parse(
@@ -141,10 +147,21 @@ class _CustomMapState extends State<CustomMap> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     width: double.infinity,
-                    child: CustomButton(
-                      buttonName: 'Find a route',
+                    child: InkWell(
+                      child: const IgnorePointer(
+                        child: CustomButton(
+                          buttonName: 'Find a route',
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FindRoute(cityName)),
+                        );
+                      },
                     ),
                   ),
                 ],

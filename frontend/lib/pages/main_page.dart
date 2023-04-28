@@ -6,7 +6,6 @@ import '../models/Offer.dart';
 import '../components/custom_item_list.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:developer' as developer;
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -65,7 +64,6 @@ class _MainPageState extends State<MainPage> {
             }
             // else if (snapshot.hasError) {
             // }
-
             return const CircularProgressIndicator();
           },
         ),
