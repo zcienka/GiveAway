@@ -8,9 +8,8 @@ Market place mobile app written in Flutter written for my Mobile Application Dev
 
 ## Technologies
 * Flutter
-* MongoDB
-* Node.js
-* Express.js
+* ASP .Net Core WebApi 7.0
+* C#
 
 ## Todo:
 - [x] Add user authentication and authorization 
@@ -20,9 +19,3 @@ Market place mobile app written in Flutter written for my Mobile Application Dev
 - [ ] Add dark mode
 - [x] Add main page with list of items
 - [x] Add item detail page
-
-## Installation and Setup Instructions
-### Node.js
-```
-node server.js
-```
