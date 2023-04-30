@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/Offer.dart';
 import '../pages/custom_map.dart';
 import '../components/custom_button.dart';

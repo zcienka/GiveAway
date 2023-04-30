@@ -24,7 +24,7 @@ services:
     image: postgres:latest
     container_name: db
     environment:
-      - POSTGRES_USER=$SECRET_KEY
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${PASSWORD}
       - POSTGRES_DB=marketplace
     ports:

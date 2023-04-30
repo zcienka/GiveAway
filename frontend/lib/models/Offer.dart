@@ -10,7 +10,7 @@ class Offer {
 
   factory Offer.fromJsonList(Map<String, dynamic> json) {
     return Offer(
-      json['_id'] as String,
+      json['id'] as String,
       json['title'] as String,
       json['description'] as String,
       json['stars'] as List<dynamic>,

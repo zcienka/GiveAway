@@ -58,7 +58,7 @@ namespace Backend.Controllers
         {
             if (UserNameExists(request.UserName))
             {
-                return StatusCode(409, "User with that username already exist.");
+                return StatusCode(409, "User with that username already exists.");
             }
 
             var salt = GenerateSaltNewInstance(32);
@@ -72,7 +72,7 @@ namespace Backend.Controllers
             var secToken = await _jwtHandler.GetTokenAsync(user);
             var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
 
-            return Ok(jwt);
+            return Ok(new {  jwt });
         }
 
         [HttpPost("login")]
@@ -96,8 +96,7 @@ namespace Backend.Controllers
                 var secToken = await _jwtHandler.GetTokenAsync(user);
                 var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
 
-
-                return Ok(jwt);
+                return Ok(new {jwt});
             }
 
             return Unauthorized(new LoginResult()

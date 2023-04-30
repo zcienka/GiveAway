@@ -7,6 +7,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'main_page.dart';
 
+
+
 class Register extends StatelessWidget {
   Register({super.key});
 
@@ -23,7 +25,7 @@ class Register extends StatelessWidget {
   Future<void> createUser(
       String username, String password, BuildContext context) async {
     final response = await http.post(
-      Uri.parse('$httpAddress/api/v1/auth/register'),
+      Uri.parse('$httpAddress/api/auth/register'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -33,9 +35,10 @@ class Register extends StatelessWidget {
       }),
     );
 
-    if (response.statusCode == 201) {
+
+    if (response.statusCode == 200) {
       const storage = FlutterSecureStorage();
-      await storage.write(key: 'jwt-token', value: jsonDecode(response.body));
+      await storage.write(key: 'jwt-token', value: jsonDecode(response.body)['jwt']);
 
       Navigator.pushReplacement(
         context,
