@@ -39,7 +39,7 @@ class _MainPageState extends State<MainPage> {
     final httpAddress = dotenv.env['HTTP_ADDRESS'];
 
     final response = await http.get(
-      Uri.parse('$httpAddress/api/v1/offers'),
+      Uri.parse('$httpAddress/api/offers'),
       headers: {
         HttpHeaders.authorizationHeader: 'Basic $jwt',
       },

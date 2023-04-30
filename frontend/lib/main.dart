@@ -5,7 +5,7 @@ import 'package:give_away/pages/login_register.dart';
 import 'package:give_away/pages/home_page.dart';
 import 'package:flutter/services.dart';
 import 'package:give_away/pages/main_page.dart';
-import 'package:give_away/pages/map/find_route.dart';
+import 'package:give_away/pages/map/find_route_form.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/.env");
@@ -40,6 +40,6 @@ void main() async {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-    child:  const FindRoute("warszawa"),
+    child:  MainPage(),
       )));
 }

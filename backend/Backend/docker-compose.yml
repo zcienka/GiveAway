@@ -1,0 +1,39 @@
+﻿version: '3.8'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  postgresqlsample:
+    depends_on:
+      - "db"
+    image: postgresqlsamplep
+    ports:
+      - "8088:80"
+    container_name: marketplace
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - dev
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      - POSTGRES_USER=$SECRET_KEY
+      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_DB=marketplace
+    ports:
+      - "5433:5432"
+    restart: always
+    volumes:
+        - app_data:/var/lib/postgresql/data
+    networks:
+      - dev
+
+volumes:
+  app_data:

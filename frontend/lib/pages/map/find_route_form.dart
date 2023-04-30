@@ -6,16 +6,18 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 
-class FindRoute extends StatefulWidget {
+import 'custom_map_route.dart';
+
+class FindRouteForm extends StatefulWidget {
   final String destination;
 
-  const FindRoute(this.destination, {Key? key}) : super(key: key);
+  const FindRouteForm(this.destination, {Key? key}) : super(key: key);
 
   @override
-  State<FindRoute> createState() => _FindRouteState();
+  State<FindRouteForm> createState() => _FindRouteFormState();
 }
 
-class _FindRouteState extends State<FindRoute> {
+class _FindRouteFormState extends State<FindRouteForm> {
   final TextEditingController startingPointController = TextEditingController();
   final TextEditingController destinationController = TextEditingController();
   Future<void>? _getCurrentLocationFuture;
@@ -30,7 +32,9 @@ class _FindRouteState extends State<FindRoute> {
   Future<void> getCurrentLocation() async {
     try {
       Position position = await Geolocator.getCurrentPosition();
-      final response = await http.get(Uri.parse("https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.latitude}&lon=${position.longitude}"));
+      final response = await http.get(Uri.parse(
+          "https://nominatim.openstreetmap.org/reverse?format=json&lat=${position
+              .latitude}&lon=${position.longitude}"));
 
       if (response.statusCode == 200) {
         final jsonResult = json.decode(response.body);
@@ -60,7 +64,10 @@ class _FindRouteState extends State<FindRoute> {
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: Text(
                   "Find the best route",
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleLarge,
                 ),
               ),
               FutureBuilder<void>(
@@ -71,7 +78,10 @@ class _FindRouteState extends State<FindRoute> {
                       fieldName: "Starting point",
                       controller: startingPointController,
                       icon: Icon(Icons.my_location,
-                          size: 32.0, color: Theme.of(context).colorScheme.primary),
+                          size: 32.0, color: Theme
+                              .of(context)
+                              .colorScheme
+                              .primary),
                       onPressed: getCurrentLocation,
                     );
                   } else {
@@ -83,12 +93,26 @@ class _FindRouteState extends State<FindRoute> {
                 fieldName: "Destination",
                 controller: destinationController,
                 icon: Icon(Icons.my_location,
-                    size: 32.0, color: Theme.of(context).colorScheme.primary),
+                    size: 32.0, color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary),
                 onPressed: getCurrentLocation,
               ),
-              const CustomButton(
-                buttonName: "Submit",
-              )
+
+              InkWell(
+                  child: const IgnorePointer(
+                    child: CustomButton(
+                      buttonName: 'Submit',
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CustomMapRoute(startingPointController.text)));
+                  }),
             ],
           ),
         ),

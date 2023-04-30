@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:give_away/components/custom_button.dart';
-import 'package:give_away/pages/map/find_route.dart';
+import 'package:give_away/pages/map/find_route_form.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +20,6 @@ class _CustomMapState extends State<CustomMap> {
   String cityName = '';
   late Future<LatLng> futureCityLocation;
 
-  // _CustomMapState(this.cityName);
   @override
   void initState() {
     super.initState();
@@ -159,7 +158,7 @@ class _CustomMapState extends State<CustomMap> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => FindRoute(cityName)),
+                              builder: (context) => FindRouteForm(cityName)),
                         );
                       },
                     ),
