@@ -21,78 +21,105 @@ class CustomMap extends StatefulWidget {
 }
 
 class _CustomMapState extends State<CustomMap> {
-  LatLng? _cityLocation;
-  String _startingPointCityName = '';
-  String _destinationCityName = '';
-  List<LatLng> _coordinates = [];
-  late Future<LatLng> _futureCityLocation;
-  final _apiKey = dotenv.env['OPEN_ROUTE_SERVICE_API_KEY'];
-  final List<Marker> _markers = [];
+  LatLng? startingPointCityCoordinates;
+  LatLng? destinationCoordinates;
+  String startingPointCityName = '';
+  String destinationCityName = '';
+  List<LatLng> pathCoordinates = [];
+  late Future<LatLng> futureStartingPointCity;
+  final apiKey = dotenv.env['OPEN_ROUTE_SERVICE_API_KEY'];
+  final List<Marker> markers = [];
 
   @override
   void initState() {
     super.initState();
-    _startingPointCityName = widget.startingPointCityName;
+    startingPointCityName = widget.startingPointCityName;
 
     if (widget.destinationCityName != null) {
-      _destinationCityName = widget.destinationCityName!;
+      destinationCityName = widget.destinationCityName!;
     }
   }
 
-  Future<LatLng> getCityLocation(String startingPointCityName) async {
-    if (_coordinates.isEmpty) {
+  Future<LatLng> getCityCoordinates(
+      String cityName, bool setDestination) async {
+    if (pathCoordinates.isEmpty) {
       getPath();
     }
 
-    final response = await http.get(Uri.parse(
-        'https://nominatim.openstreetmap.org/search?q=$startingPointCityName&format=json&limit=1'));
-
-    if (response.statusCode == 200) {
-      final jsonResult = json.decode(response.body);
-
-      if (jsonResult.isNotEmpty) {
-        final latitude = double.parse(jsonResult[0]['lat']);
-        final longitude = double.parse(jsonResult[0]['lon']);
-
-        setState(() {
-          _cityLocation = LatLng(latitude, longitude);
-        });
-
-        return LatLng(latitude, longitude);
-      }
-    }
-    throw Exception(jsonDecode(response.body));
-  }
-
-  Future<void> getPath() async {
-    if (widget.destinationCityName != '' &&
-        widget.destinationCityName != null) {
-      final Map<String, String> headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $_apiKey',
-      };
-      final response = await http.get(
-        Uri.parse(
-            'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$_apiKey&start=-122.073827,37.386051&end=-122.078827,37.386051'),
-      );
+    if (cityName != '') {
+      final response = await http.get(Uri.parse(
+          'https://nominatim.openstreetmap.org/search?q=$cityName&format=json&limit=1'));
 
       if (response.statusCode == 200) {
         final jsonResult = json.decode(response.body);
 
         if (jsonResult.isNotEmpty) {
-          final coords = jsonResult['features'][0]['geometry']['coordinates'];
+          final latitude = double.parse(jsonResult[0]['lat']);
+          final longitude = double.parse(jsonResult[0]['lon']);
 
-          if (_coordinates.isEmpty) {
+          if (!setDestination) {
             setState(() {
-              for (var element in coords) {
-                _coordinates.add(LatLng(element[1], element[0]));
-              }
+              startingPointCityCoordinates = LatLng(latitude, longitude);
+            });
+          } else {
+            setState(() {
+              destinationCoordinates = LatLng(latitude, longitude);
             });
           }
+
+          return LatLng(latitude, longitude);
         }
       }
       throw Exception(jsonDecode(response.body));
     }
+    return LatLng(0, 0);
+  }
+
+  Future<LatLng> getPath() async {
+    if (widget.destinationCityName != '' &&
+        widget.destinationCityName != null &&
+        pathCoordinates.isEmpty &&
+        startingPointCityCoordinates != null &&
+        destinationCoordinates != null) {
+      final startingCityLatitude =
+          startingPointCityCoordinates?.latitude.toString();
+      final startingCityLongitude =
+          startingPointCityCoordinates?.longitude.toString();
+
+      final destinationLatitude = destinationCoordinates?.latitude.toString();
+      final destinationLongitude = destinationCoordinates?.longitude.toString();
+
+      var logger = Logger();
+
+      final response = await http.get(
+        Uri.parse(
+            'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=$startingCityLongitude,$startingCityLatitude&end=$destinationLongitude,$destinationLatitude'),
+      );
+      logger.d(response.body);
+
+      // logger.d(
+      //     "$startingCityLatitude, $startingCityLongitude, $destinationLatitude, $destinationLongitude");
+      if (response.statusCode == 200) {
+        final jsonResult = json.decode(response.body);
+
+        if (jsonResult.isNotEmpty) {
+          final coords =
+              jsonResult['features'][0]['geometry']['coordinates'];
+          logger.d(coords);
+
+          if (pathCoordinates.isEmpty) {
+            setState(() {
+              for (var element in coords) {
+                pathCoordinates.add(LatLng(element[1], element[0]));
+              }
+            });
+          }
+        }
+        return LatLng(0, 0);
+      }
+      throw Exception(jsonDecode(response.body));
+    }
+    return LatLng(0, 0);
   }
 
   @override
@@ -100,25 +127,28 @@ class _CustomMapState extends State<CustomMap> {
     return Scaffold(
       body: Stack(
         children: [
-          FutureBuilder<LatLng>(
-            future: getCityLocation(_startingPointCityName),
+          FutureBuilder(
+            future: Future.wait([
+              getCityCoordinates(startingPointCityName, false),
+              getCityCoordinates(destinationCityName, true),
+            ]),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return FlutterMap(
                   options: MapOptions(
-                    center: _cityLocation,
+                    center: startingPointCityCoordinates,
                     zoom: 13,
                   ),
                   layers: [
                     TileLayerOptions(
                       urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c'],
                     ),
                     PolylineLayerOptions(
                       polylines: [
                         Polyline(
-                          points: _coordinates,
+                          points: pathCoordinates,
                           color: Colors.red,
                           strokeWidth: 4,
                         ),
@@ -129,9 +159,8 @@ class _CustomMapState extends State<CustomMap> {
                         Marker(
                           width: 80.0,
                           height: 80.0,
-                          point: _cityLocation!,
-                          builder: (ctx) =>
-                          const Icon(
+                          point: startingPointCityCoordinates!,
+                          builder: (ctx) => const Icon(
                             Icons.location_pin,
                             color: Colors.red,
                             size: 64.0,
@@ -177,10 +206,7 @@ class _CustomMapState extends State<CustomMap> {
             bottom: 0,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               height: 180,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -201,7 +227,7 @@ class _CustomMapState extends State<CustomMap> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    _startingPointCityName,
+                    startingPointCityName,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -220,7 +246,7 @@ class _CustomMapState extends State<CustomMap> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  FindRouteForm(_startingPointCityName)),
+                                  FindRouteForm(startingPointCityName)),
                         );
                       },
                     ),

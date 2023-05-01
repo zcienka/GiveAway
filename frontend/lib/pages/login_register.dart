@@ -5,15 +5,17 @@ import 'package:give_away/components/custom_textfield.dart';
 import 'package:give_away/components/custom_button.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'main_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Register extends StatelessWidget {
   Register({super.key});
 
   final httpAddress = dotenv.env['HTTP_ADDRESS'];
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
-  final TextEditingController _repeatPassword = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final TextEditingController repeatPassword = TextEditingController();
 
   Future<void> createUser(
       String username, String password, BuildContext context) async {
@@ -28,10 +30,10 @@ class Register extends StatelessWidget {
       }),
     );
 
-
     if (response.statusCode == 200) {
       const storage = FlutterSecureStorage();
-      await storage.write(key: 'jwt-token', value: jsonDecode(response.body)['jwt']);
+      await storage.write(
+          key: 'jwt-token', value: jsonDecode(response.body)['jwt']);
 
       Navigator.pushReplacement(
         context,
@@ -44,8 +46,11 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+      ],
+    );
 
     return Scaffold(
         body: Center(
@@ -74,7 +79,32 @@ class Register extends StatelessWidget {
                         Container(
                             margin: const EdgeInsets.symmetric(vertical: 16),
                             child: OutlinedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  _googleSignIn.isSignedIn().then((value) {
+                                    if (value) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const MainPage()),
+                                      );
+                                    } else {
+                                      _googleSignIn.signIn().then((value) {
+                                        // var logger = Logger();
+                                        // logger.d(value);
+                                        // String username = value!.displayName!;
+                                        // String profilePicture = value.photoUrl!;
+
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const MainPage()),
+                                        );
+                                      });
+                                    }
+                                  });
+                                },
                                 style: ButtonStyle(
                                   minimumSize: MaterialStateProperty.all(
                                       const Size.fromHeight(48)),
@@ -104,17 +134,17 @@ class Register extends StatelessWidget {
                                 fontSize: 16,
                                 color:
                                     Theme.of(context).colorScheme.secondary)),
-                        CustomTextField(fieldName: "Email", controller: _email),
+                        CustomTextField(fieldName: "Email", controller: email),
                         CustomTextField(
-                            fieldName: "Password", controller: _password),
+                            fieldName: "Password", controller: password),
                         CustomTextField(
                             fieldName: "Repeat password",
-                            controller: _repeatPassword),
+                            controller: repeatPassword),
                         InkWell(
                           child: const IgnorePointer(
                               child: CustomButton(buttonName: "Register")),
                           onTap: () {
-                            createUser(_email.text, _password.text, context);
+                            createUser(email.text, password.text, context);
                           },
                         ),
                         Container(

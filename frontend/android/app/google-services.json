@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "921209020121",
+    "project_id": "marketplace-dc04a",
+    "storage_bucket": "marketplace-dc04a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921209020121:android:045b063f9fdcd94bd428c8",
+        "android_client_info": {
+          "package_name": "com.example.give_away"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "921209020121-618nuoe4p70l3635gtnaaor53i5ckbm8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.give_away",
+            "certificate_hash": "f71840cd60a5004ad76a36cb0f600ad8d466bd16"
+          }
+        },
+        {
+          "client_id": "921209020121-bb00lg3oim64i9d5fulc8io59m2tp4vp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqgOA4irY39vYUgiW1eD_LvRrlNIhSkSg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "921209020121-bb00lg3oim64i9d5fulc8io59m2tp4vp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

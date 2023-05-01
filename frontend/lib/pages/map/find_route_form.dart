@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../components/custom_button.dart';
 import '../../components/custom_icon_textfield.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'custom_map.dart';
+import 'package:logger/logger.dart';
 
 class FindRouteForm extends StatefulWidget {
   final String destination;
@@ -17,15 +17,15 @@ class FindRouteForm extends StatefulWidget {
 }
 
 class _FindRouteFormState extends State<FindRouteForm> {
-  final TextEditingController _startingPointController = TextEditingController();
-  final TextEditingController _destinationController = TextEditingController();
-  Future<void>? _getCurrentLocationFuture;
+  final TextEditingController startingPointController = TextEditingController();
+  final TextEditingController destinationController = TextEditingController();
+  Future<void>? getCurrentLocationFuture;
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocationFuture = getCurrentLocation();
-    _destinationController.text = widget.destination;
+    getCurrentLocationFuture = getCurrentLocation();
+    destinationController.text = widget.destination;
   }
 
   Future<void> getCurrentLocation() async {
@@ -40,12 +40,14 @@ class _FindRouteFormState extends State<FindRouteForm> {
         if (jsonResult.isNotEmpty) {
           final city = jsonResult['address']['city'];
           setState(() {
-            _startingPointController.text = "$city";
+            startingPointController.text = "$city";
           });
         }
       }
     } catch (e) {
-      developer.log(e.toString());
+      var logger = Logger();
+      logger.d(e.toString());
+
     }
   }
 
@@ -55,7 +57,7 @@ class _FindRouteFormState extends State<FindRouteForm> {
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: FutureBuilder<void>(
-          future: _getCurrentLocationFuture,
+          future: getCurrentLocationFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Center(
@@ -72,7 +74,7 @@ class _FindRouteFormState extends State<FindRouteForm> {
                     ),
                     CustomIconTextField(
                       fieldName: "Starting point",
-                      controller: _startingPointController,
+                      controller: startingPointController,
                       icon: Icon(Icons.my_location,
                         size: 32.0,
                           color: Theme.of(context).colorScheme.primary),
@@ -80,7 +82,7 @@ class _FindRouteFormState extends State<FindRouteForm> {
                     ),
                     CustomIconTextField(
                       fieldName: "Destination",
-                      controller: _destinationController,
+                      controller: destinationController,
                       icon: Icon(Icons.my_location,
                           size: 32.0,
                           color: Theme.of(context).colorScheme.primary),
@@ -97,7 +99,7 @@ class _FindRouteFormState extends State<FindRouteForm> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      CustomMap(_startingPointController.text, destinationCityName: _destinationController.text)));
+                                      CustomMap(startingPointController.text, destinationCityName: destinationController.text)));
                         }),
                   ],
                 ),
