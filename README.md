@@ -1,6 +1,8 @@
 # GiveAway
 Market place mobile app written in Flutter written for my Mobile Application Development class where you can give away items for free to people in your area. 
 
+The app allows users to browse items and check where they are located on the map and find the best route to get there. To access the site the users can login with their Google account or create a new account.
+
 # Main page and item detail page
 ![alt text](./screenshots/image0.png)![alt text](./screenshots/image1.png)
 # Map view

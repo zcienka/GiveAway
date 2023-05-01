@@ -7,20 +7,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'main_page.dart';
 
-
-
 class Register extends StatelessWidget {
   Register({super.key});
 
-  final http.Client httpClient = http.Client();
-
   final httpAddress = dotenv.env['HTTP_ADDRESS'];
-
-  final TextEditingController email = TextEditingController();
-
-  final TextEditingController password = TextEditingController();
-
-  final TextEditingController repeatPassword = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _repeatPassword = TextEditingController();
 
   Future<void> createUser(
       String username, String password, BuildContext context) async {
@@ -79,7 +72,7 @@ class Register extends StatelessWidget {
                       ),
                       Column(children: [
                         Container(
-                            margin: const EdgeInsets.symmetric(vertical: 16.0),
+                            margin: const EdgeInsets.symmetric(vertical: 16),
                             child: OutlinedButton(
                                 onPressed: () {},
                                 style: ButtonStyle(
@@ -111,21 +104,21 @@ class Register extends StatelessWidget {
                                 fontSize: 16,
                                 color:
                                     Theme.of(context).colorScheme.secondary)),
-                        CustomTextField(fieldName: "Email", controller: email),
+                        CustomTextField(fieldName: "Email", controller: _email),
                         CustomTextField(
-                            fieldName: "Password", controller: password),
+                            fieldName: "Password", controller: _password),
                         CustomTextField(
                             fieldName: "Repeat password",
-                            controller: repeatPassword),
+                            controller: _repeatPassword),
                         InkWell(
                           child: const IgnorePointer(
                               child: CustomButton(buttonName: "Register")),
                           onTap: () {
-                            createUser(email.text, password.text, context);
+                            createUser(_email.text, _password.text, context);
                           },
                         ),
                         Container(
-                          margin: const EdgeInsets.only(top: 16.0),
+                          margin: const EdgeInsets.only(top: 16),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: RichText(

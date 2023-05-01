@@ -6,7 +6,6 @@ import '../models/Offer.dart';
 import '../components/custom_item_list.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -29,12 +28,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> readFromStorage() async {
     String? value = await storage.read(key: 'jwt-token');
-    var logger = Logger(
-      printer: PrettyPrinter(),
-    );
-
     jwt = value!;
-    logger.i(jwt);
 
     setState(() {
       futureOffer = fetchOffer();
@@ -51,14 +45,7 @@ class _MainPageState extends State<MainPage> {
       },
     );
 
-    var logger = Logger(
-      printer: PrettyPrinter(),
-    );
-
-    logger.i(jsonDecode(response.body));
-
     if (response.statusCode == 200) {
-
       return Offer.fromJsonArray(jsonDecode(response.body));
     } else {
       throw Exception(jsonDecode(response.body));

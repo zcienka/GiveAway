@@ -5,8 +5,7 @@ import '../../components/custom_icon_textfield.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
-
-import 'custom_map_route.dart';
+import 'custom_map.dart';
 
 class FindRouteForm extends StatefulWidget {
   final String destination;
@@ -18,15 +17,15 @@ class FindRouteForm extends StatefulWidget {
 }
 
 class _FindRouteFormState extends State<FindRouteForm> {
-  final TextEditingController startingPointController = TextEditingController();
-  final TextEditingController destinationController = TextEditingController();
-  Future<void>? getCurrentLocationFuture;
+  final TextEditingController _startingPointController = TextEditingController();
+  final TextEditingController _destinationController = TextEditingController();
+  Future<void>? _getCurrentLocationFuture;
 
   @override
   void initState() {
     super.initState();
-    getCurrentLocationFuture = getCurrentLocation();
-    destinationController.text = widget.destination;
+    _getCurrentLocationFuture = getCurrentLocation();
+    _destinationController.text = widget.destination;
   }
 
   Future<void> getCurrentLocation() async {
@@ -41,7 +40,7 @@ class _FindRouteFormState extends State<FindRouteForm> {
         if (jsonResult.isNotEmpty) {
           final city = jsonResult['address']['city'];
           setState(() {
-            startingPointController.text = "$city";
+            _startingPointController.text = "$city";
           });
         }
       }
@@ -56,7 +55,7 @@ class _FindRouteFormState extends State<FindRouteForm> {
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: FutureBuilder<void>(
-          future: getCurrentLocationFuture,
+          future: _getCurrentLocationFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Center(
@@ -67,20 +66,21 @@ class _FindRouteFormState extends State<FindRouteForm> {
                       padding: EdgeInsets.only(bottom: 16.0),
                       child: Text(
                         "Find the best route",
-                        style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 28.0, fontWeight: FontWeight.bold),
                       ),
                     ),
                     CustomIconTextField(
                       fieldName: "Starting point",
-                      controller: startingPointController,
+                      controller: _startingPointController,
                       icon: Icon(Icons.my_location,
-                          size: 32.0,
+                        size: 32.0,
                           color: Theme.of(context).colorScheme.primary),
                       onPressed: getCurrentLocation,
                     ),
                     CustomIconTextField(
                       fieldName: "Destination",
-                      controller: destinationController,
+                      controller: _destinationController,
                       icon: Icon(Icons.my_location,
                           size: 32.0,
                           color: Theme.of(context).colorScheme.primary),
@@ -96,8 +96,8 @@ class _FindRouteFormState extends State<FindRouteForm> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CustomMapRoute(
-                                      startingPointController.text)));
+                                  builder: (context) =>
+                                      CustomMap(_startingPointController.text, destinationCityName: _destinationController.text)));
                         }),
                   ],
                 ),

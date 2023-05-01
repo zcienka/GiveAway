@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:give_away/pages/custom_map.dart';
+import 'package:give_away/pages/map/custom_map.dart';
 import 'package:give_away/pages/login_register.dart';
 import 'package:give_away/pages/home_page.dart';
 import 'package:flutter/services.dart';
