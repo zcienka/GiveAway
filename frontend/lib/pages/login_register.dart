@@ -44,6 +44,31 @@ class Register extends StatelessWidget {
     }
   }
 
+  Future<void> getJwt(String? username, BuildContext context) async {
+    final response = await http.post(
+      Uri.parse('$httpAddress/api/auth/jwt'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String?>{
+        'username': username,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      const storage = FlutterSecureStorage();
+      await storage.write(
+          key: 'jwt-token', value: jsonDecode(response.body)['jwt']);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    } else {
+      throw Exception('Failed to create the user.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -56,11 +81,11 @@ class Register extends StatelessWidget {
         body: Center(
       child: SingleChildScrollView(
         child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             color: Theme.of(context).colorScheme.background,
             child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 32.0),
+                    horizontal: 16, vertical: 32),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
@@ -82,19 +107,16 @@ class Register extends StatelessWidget {
                                 onPressed: () {
                                   _googleSignIn.isSignedIn().then((value) {
                                     if (value) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const MainPage()),
-                                      );
+                                      getJwt(
+                                          _googleSignIn
+                                              .currentUser?.displayName,
+                                          context);
                                     } else {
                                       _googleSignIn.signIn().then((value) {
-                                        // var logger = Logger();
-                                        // logger.d(value);
-                                        // String username = value!.displayName!;
-                                        // String profilePicture = value.photoUrl!;
-
+                                        getJwt(
+                                            _googleSignIn
+                                                .currentUser?.displayName,
+                                            context);
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(

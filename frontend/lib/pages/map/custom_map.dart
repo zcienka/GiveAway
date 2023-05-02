@@ -26,7 +26,7 @@ class _CustomMapState extends State<CustomMap> {
   String startingPointCityName = '';
   String destinationCityName = '';
   List<LatLng> pathCoordinates = [];
-  late Future<LatLng> futureStartingPointCity;
+  late Future<void> futurePath;
   final apiKey = dotenv.env['OPEN_ROUTE_SERVICE_API_KEY'];
   final List<Marker> markers = [];
 
@@ -38,14 +38,12 @@ class _CustomMapState extends State<CustomMap> {
     if (widget.destinationCityName != null) {
       destinationCityName = widget.destinationCityName!;
     }
+
+    futurePath = waitForThreeFutures();
   }
 
   Future<LatLng> getCityCoordinates(
       String cityName, bool setDestination) async {
-    if (pathCoordinates.isEmpty) {
-      getPath();
-    }
-
     if (cityName != '') {
       final response = await http.get(Uri.parse(
           'https://nominatim.openstreetmap.org/search?q=$cityName&format=json&limit=1'));
@@ -57,14 +55,12 @@ class _CustomMapState extends State<CustomMap> {
           final latitude = double.parse(jsonResult[0]['lat']);
           final longitude = double.parse(jsonResult[0]['lon']);
 
+          // logger.d('$latitude, $longitude');
+
           if (!setDestination) {
-            setState(() {
-              startingPointCityCoordinates = LatLng(latitude, longitude);
-            });
+            startingPointCityCoordinates = LatLng(latitude, longitude);
           } else {
-            setState(() {
-              destinationCoordinates = LatLng(latitude, longitude);
-            });
+            destinationCoordinates = LatLng(latitude, longitude);
           }
 
           return LatLng(latitude, longitude);
@@ -75,50 +71,52 @@ class _CustomMapState extends State<CustomMap> {
     return LatLng(0, 0);
   }
 
-  Future<LatLng> getPath() async {
-    if (widget.destinationCityName != '' &&
-        widget.destinationCityName != null &&
-        pathCoordinates.isEmpty &&
-        startingPointCityCoordinates != null &&
-        destinationCoordinates != null) {
+  Future<LatLng> getPath(List<LatLng> val) async {
+
+    if (pathCoordinates.isEmpty) {
+      var logger = Logger();
+      logger.d(val);
+
       final startingCityLatitude =
-          startingPointCityCoordinates?.latitude.toString();
+      startingPointCityCoordinates?.latitude.toString();
       final startingCityLongitude =
-          startingPointCityCoordinates?.longitude.toString();
+      startingPointCityCoordinates?.longitude.toString();
 
       final destinationLatitude = destinationCoordinates?.latitude.toString();
       final destinationLongitude = destinationCoordinates?.longitude.toString();
-
-      var logger = Logger();
 
       final response = await http.get(
         Uri.parse(
             'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=$startingCityLongitude,$startingCityLatitude&end=$destinationLongitude,$destinationLatitude'),
       );
-      logger.d(response.body);
-
-      // logger.d(
-      //     "$startingCityLatitude, $startingCityLongitude, $destinationLatitude, $destinationLongitude");
       if (response.statusCode == 200) {
         final jsonResult = json.decode(response.body);
+        logger.d(response.statusCode);
 
         if (jsonResult.isNotEmpty) {
-          final coords =
-              jsonResult['features'][0]['geometry']['coordinates'];
-          logger.d(coords);
+          final coords = jsonResult['features'][0]['geometry']['coordinates'];
+          var logger = Logger();
+
+          // logger.d(coords);
 
           if (pathCoordinates.isEmpty) {
-            setState(() {
               for (var element in coords) {
                 pathCoordinates.add(LatLng(element[1], element[0]));
               }
-            });
           }
         }
         return LatLng(0, 0);
       }
-      throw Exception(jsonDecode(response.body));
+      // throw Exception(jsonDecode(response.body));
     }
+    return LatLng(0, 0);
+  }
+
+  Future<LatLng> waitForThreeFutures() async {
+    LatLng startingPointCityCoordinates =  await getCityCoordinates(startingPointCityName, false);
+    LatLng destinationCoordinates =   await getCityCoordinates(destinationCityName, true);
+    List<LatLng> pathCoordinates = [startingPointCityCoordinates, destinationCoordinates];
+    LatLng path =  await getPath(pathCoordinates);
     return LatLng(0, 0);
   }
 
@@ -128,16 +126,13 @@ class _CustomMapState extends State<CustomMap> {
       body: Stack(
         children: [
           FutureBuilder(
-            future: Future.wait([
-              getCityCoordinates(startingPointCityName, false),
-              getCityCoordinates(destinationCityName, true),
-            ]),
+            future: futurePath,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return FlutterMap(
                   options: MapOptions(
                     center: startingPointCityCoordinates,
-                    zoom: 13,
+                    zoom: 8,
                   ),
                   layers: [
                     TileLayerOptions(
@@ -149,8 +144,8 @@ class _CustomMapState extends State<CustomMap> {
                       polylines: [
                         Polyline(
                           points: pathCoordinates,
-                          color: Colors.red,
-                          strokeWidth: 4,
+                          color: Theme.of(context).colorScheme.primary,
+                          strokeWidth: 12,
                         ),
                       ],
                     ),
@@ -166,14 +161,23 @@ class _CustomMapState extends State<CustomMap> {
                             size: 64.0,
                           ),
                         ),
+                        Marker(
+                          width: 80.0,
+                          height: 80.0,
+                          point: destinationCoordinates!,
+                          builder: (ctx) => const Icon(
+                            Icons.location_pin,
+                            color: Colors.red,
+                            size: 64.0,
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 );
+              } else {
+                return const CircularProgressIndicator();
               }
-              // else if (snapshot.hasError) {
-              // }
-              return const CircularProgressIndicator();
             },
           ),
           Positioned(

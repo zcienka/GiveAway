@@ -15,12 +15,10 @@ namespace Backend.Models
             _configuration = configuration;
         }
 
-        public async Task<JwtSecurityToken> GetTokenAsync(User user)
+        public JwtSecurityToken GetToken(UserDto user)
         {
             var claims = new[] {
-                new Claim("username", user.UserName),
-                new Claim("userId",
-                    Guid.NewGuid().ToString())
+                new Claim("username", user.UserName)
             };
 
             var jwtOptions = new JwtSecurityToken(

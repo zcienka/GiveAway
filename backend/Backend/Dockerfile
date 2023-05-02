@@ -18,4 +18,6 @@ RUN mkdir /app/images
 COPY ./images /app/images
 VOLUME /app/images
 
+COPY --from=0 /app/appsettings.json /app
+
 ENTRYPOINT ["dotnet", "Backend.dll"]

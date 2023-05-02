@@ -69,12 +69,22 @@ namespace Backend.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var secToken = await _jwtHandler.GetTokenAsync(user);
+            var userJwt = new UserDto { UserName = request.UserName };
+
+            var secToken = _jwtHandler.GetToken(userJwt);
             var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
 
-            return Ok(new {  jwt });
+            return Ok(new { jwt });
         }
 
+        [HttpPost("jwt")]
+        public async Task<IActionResult> GetJwt(UserDto userDto)
+        {
+            var secToken = _jwtHandler.GetToken(userDto);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
+            return Ok(new { jwt });
+        }
+            
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRegisterRequest request)
         {
@@ -93,10 +103,12 @@ namespace Backend.Controllers
 
             if (String.Compare(user.PasswordHash, passwordSubmitted) == 0)
             {
-                var secToken = await _jwtHandler.GetTokenAsync(user);
+                var userJwt = new UserDto { UserName = request.UserName };
+
+                var secToken =  _jwtHandler.GetToken(userJwt);
                 var jwt = new JwtSecurityTokenHandler().WriteToken(secToken);
 
-                return Ok(new {jwt});
+                return Ok(new { jwt });
             }
 
             return Unauthorized(new LoginResult()
