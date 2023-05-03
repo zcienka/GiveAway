@@ -46,7 +46,7 @@ class CustomIconTextField extends StatelessWidget {
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.outline, width: 1.0),
+                    color: Theme.of(context).colorScheme.outline, width: 1),
                 borderRadius: BorderRadius.circular(12),
               ),
             )),

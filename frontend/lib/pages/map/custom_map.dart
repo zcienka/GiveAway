@@ -29,6 +29,7 @@ class _CustomMapState extends State<CustomMap> {
   late Future<void> futurePath;
   final apiKey = dotenv.env['OPEN_ROUTE_SERVICE_API_KEY'];
   final List<Marker> markers = [];
+  late double travelDuration = 0;
 
   @override
   void initState() {
@@ -38,8 +39,7 @@ class _CustomMapState extends State<CustomMap> {
     if (widget.destinationCityName != null) {
       destinationCityName = widget.destinationCityName!;
     }
-
-    futurePath = waitForThreeFutures();
+    futurePath = fetchMapsAndPaths();
   }
 
   Future<LatLng> getCityCoordinates(
@@ -55,8 +55,6 @@ class _CustomMapState extends State<CustomMap> {
           final latitude = double.parse(jsonResult[0]['lat']);
           final longitude = double.parse(jsonResult[0]['lon']);
 
-          // logger.d('$latitude, $longitude');
-
           if (!setDestination) {
             startingPointCityCoordinates = LatLng(latitude, longitude);
           } else {
@@ -68,56 +66,61 @@ class _CustomMapState extends State<CustomMap> {
       }
       throw Exception(jsonDecode(response.body));
     }
-    return LatLng(0, 0);
+    throw Exception(jsonDecode('City name is empty'));
   }
 
-  Future<LatLng> getPath(List<LatLng> val) async {
+  Future<void> getPath(List<LatLng> val) async {
+    final startingCityLatitude =
+        startingPointCityCoordinates?.latitude.toString();
+    final startingCityLongitude =
+        startingPointCityCoordinates?.longitude.toString();
 
-    if (pathCoordinates.isEmpty) {
-      var logger = Logger();
-      logger.d(val);
+    final destinationLatitude = destinationCoordinates?.latitude.toString();
+    final destinationLongitude = destinationCoordinates?.longitude.toString();
 
-      final startingCityLatitude =
-      startingPointCityCoordinates?.latitude.toString();
-      final startingCityLongitude =
-      startingPointCityCoordinates?.longitude.toString();
+    final response = await http.get(
+      Uri.parse(
+          'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=$startingCityLongitude,$startingCityLatitude&end=$destinationLongitude,$destinationLatitude'),
+    );
 
-      final destinationLatitude = destinationCoordinates?.latitude.toString();
-      final destinationLongitude = destinationCoordinates?.longitude.toString();
+    if (response.statusCode == 200) {
+      Logger logger = Logger();
+      final jsonResult = json.decode(response.body);
+      logger.d(
+          jsonResult['features'][0]['properties']['segments'][0]['duration']);
 
-      final response = await http.get(
-        Uri.parse(
-            'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=$startingCityLongitude,$startingCityLatitude&end=$destinationLongitude,$destinationLatitude'),
-      );
-      if (response.statusCode == 200) {
-        final jsonResult = json.decode(response.body);
-        logger.d(response.statusCode);
+      final coords = jsonResult['features'][0]['geometry']['coordinates'];
+      final seconds =
+          jsonResult['features'][0]['properties']['segments'][0]['duration'];
 
-        if (jsonResult.isNotEmpty) {
-          final coords = jsonResult['features'][0]['geometry']['coordinates'];
-          var logger = Logger();
+      Duration durationInMinutes = Duration(seconds: seconds.toInt());
+      double hours =
+          durationInMinutes.inHours + (durationInMinutes.inMinutes % 60) / 60.0;
 
-          // logger.d(coords);
+      setState(() {
+        travelDuration = hours;
+      });
 
-          if (pathCoordinates.isEmpty) {
-              for (var element in coords) {
-                pathCoordinates.add(LatLng(element[1], element[0]));
-              }
-          }
+      if (pathCoordinates.isEmpty) {
+        for (var element in coords) {
+          pathCoordinates.add(LatLng(element[1], element[0]));
         }
-        return LatLng(0, 0);
       }
-      // throw Exception(jsonDecode(response.body));
     }
-    return LatLng(0, 0);
   }
 
-  Future<LatLng> waitForThreeFutures() async {
-    LatLng startingPointCityCoordinates =  await getCityCoordinates(startingPointCityName, false);
-    LatLng destinationCoordinates =   await getCityCoordinates(destinationCityName, true);
-    List<LatLng> pathCoordinates = [startingPointCityCoordinates, destinationCoordinates];
-    LatLng path =  await getPath(pathCoordinates);
-    return LatLng(0, 0);
+  Future<LatLng> fetchMapsAndPaths() async {
+    LatLng startingPointCityCoordinates =
+        await getCityCoordinates(startingPointCityName, false);
+    LatLng destinationCoordinates =
+        await getCityCoordinates(destinationCityName, true);
+
+    List<LatLng> pathCoordinates = [
+      startingPointCityCoordinates,
+      destinationCoordinates
+    ];
+    await getPath(pathCoordinates);
+    return destinationCoordinates;
   }
 
   @override
@@ -136,16 +139,18 @@ class _CustomMapState extends State<CustomMap> {
                   ),
                   layers: [
                     TileLayerOptions(
-                      urlTemplate:
-                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                      subdomains: ['a', 'b', 'c'],
-                    ),
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: ['a', 'b', 'c']),
                     PolylineLayerOptions(
                       polylines: [
                         Polyline(
                           points: pathCoordinates,
                           color: Theme.of(context).colorScheme.primary,
                           strokeWidth: 12,
+                          borderStrokeWidth: 5,
+                          borderColor: Colors.indigo,
+                          isDotted: true,
                         ),
                       ],
                     ),
@@ -158,7 +163,7 @@ class _CustomMapState extends State<CustomMap> {
                           builder: (ctx) => const Icon(
                             Icons.location_pin,
                             color: Colors.red,
-                            size: 64.0,
+                            size: 54.0,
                           ),
                         ),
                         Marker(
@@ -168,7 +173,7 @@ class _CustomMapState extends State<CustomMap> {
                           builder: (ctx) => const Icon(
                             Icons.location_pin,
                             color: Colors.red,
-                            size: 64.0,
+                            size: 54.0,
                           ),
                         ),
                       ],
@@ -176,7 +181,7 @@ class _CustomMapState extends State<CustomMap> {
                   ],
                 );
               } else {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator());
               }
             },
           ),
@@ -209,9 +214,8 @@ class _CustomMapState extends State<CustomMap> {
           Positioned(
             bottom: 0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
               width: MediaQuery.of(context).size.width,
-              height: 180,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.vertical(
@@ -230,31 +234,81 @@ class _CustomMapState extends State<CustomMap> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    startingPointCityName,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: InkWell(
-                      child: const IgnorePointer(
-                        child: CustomButton(
-                          buttonName: 'Find a route',
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.place_rounded,
+                                color: Theme.of(context).colorScheme.secondary),
+                            Text(
+                              startingPointCityName,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  FindRouteForm(startingPointCityName)),
-                        );
-                      },
-                    ),
+                      if (destinationCityName != '' && travelDuration != 0)
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                travelDuration.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                              Text(
+                                ' hours',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
+                  destinationCityName == ''
+                      ? SizedBox(
+                          width: double.infinity,
+                          child: InkWell(
+                            child: const IgnorePointer(
+                              child: CustomButton(
+                                buttonName: 'Find a route',
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        FindRouteForm(startingPointCityName)),
+                              );
+                            },
+                          ),
+                        )
+                      : Row(children: [
+                          Icon(Icons.place_rounded,
+                              color: Theme.of(context).colorScheme.secondary),
+                          Text(
+                            destinationCityName,
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]),
                 ],
               ),
             ),
