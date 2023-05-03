@@ -5,8 +5,9 @@ class Offer {
   final List<dynamic> stars;
   final String img;
   final String location;
+  final String phoneNumber;
 
-  Offer(this.id, this.title, this.description, this.stars, this.img, this.location);
+  Offer(this.id, this.title, this.description, this.stars, this.img, this.location, this.phoneNumber);
 
   factory Offer.fromJsonList(Map<String, dynamic> json) {
     return Offer(
@@ -16,6 +17,7 @@ class Offer {
       json['stars'] as List<dynamic>,
       json['img'] as String,
       json['location'] as String,
+      json['phoneNumber'] as String,
     );
   }
 

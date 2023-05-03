@@ -47,67 +47,68 @@ class _FindRouteFormState extends State<FindRouteForm> {
     } catch (e) {
       var logger = Logger();
       logger.d(e.toString());
-
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: FutureBuilder<void>(
-          future: getCurrentLocationFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 16.0),
-                      child: Text(
-                        "Find the best route",
-                        style: TextStyle(
-                            fontSize: 28.0, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    CustomIconTextField(
-                      fieldName: "Starting point",
-                      controller: startingPointController,
-                      icon: Icon(Icons.my_location,
-                        size: 32.0,
-                          color: Theme.of(context).colorScheme.primary),
-                      onPressed: getCurrentLocation,
-                    ),
-                    CustomIconTextField(
-                      fieldName: "Destination",
-                      controller: destinationController,
-                      icon: Icon(Icons.my_location,
-                          size: 32.0,
-                          color: Theme.of(context).colorScheme.primary),
-                      onPressed: getCurrentLocation,
-                    ),
-                    InkWell(
-                        child: const IgnorePointer(
-                          child: CustomButton(
-                            buttonName: 'Submit',
-                          ),
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: FutureBuilder<void>(
+            future: getCurrentLocationFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16.0),
+                        child: Text(
+                          "Find the best route",
+                          style: TextStyle(
+                              fontSize: 28.0, fontWeight: FontWeight.bold),
                         ),
-                        onTap: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      CustomMap(startingPointController.text, destinationCityName: destinationController.text)));
-                        }),
-                  ],
-                ),
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+                      ),
+                      CustomIconTextField(
+                        fieldName: "Starting point",
+                        controller: startingPointController,
+                        icon: Icon(Icons.my_location,
+                          size: 32.0,
+                            color: Theme.of(context).colorScheme.primary),
+                        onPressed: getCurrentLocation,
+                      ),
+                      CustomIconTextField(
+                        fieldName: "Destination",
+                        controller: destinationController,
+                        icon: Icon(Icons.my_location,
+                            size: 32.0,
+                            color: Theme.of(context).colorScheme.primary),
+                        onPressed: getCurrentLocation,
+                      ),
+                      InkWell(
+                          child: const IgnorePointer(
+                            child: CustomButton(
+                              buttonName: 'Submit',
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CustomMap(startingPointController.text, destinationCityName: destinationController.text)));
+                          }),
+                    ],
+                  ),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
         ),
       ),
     );

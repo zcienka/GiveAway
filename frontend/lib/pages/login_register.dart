@@ -5,6 +5,7 @@ import 'package:give_away/components/custom_textfield.dart';
 import 'package:give_away/components/custom_button.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'error_page.dart';
 import 'main_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/gestures.dart';
@@ -71,7 +72,10 @@ class _LoginRegisterState extends State<LoginRegister> {
         MaterialPageRoute(builder: (context) => MainPage()),
       );
     } else {
-      throw Exception('Failed to create the user.');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ErrorPage()),
+      );
     }
   }
 

@@ -8,6 +8,8 @@ import '../components/custom_item_list.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'error_page.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -69,8 +71,12 @@ class _MainPageState extends State<MainPage> {
             if (snapshot.hasData) {
               return CustomItemList(snapshot.data!);
             }
-            // else if (snapshot.hasError) {
-            // }
+            else if (snapshot.hasError) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ErrorPage()),
+              );
+            }
             return const CircularProgressIndicator();
           },
         ),

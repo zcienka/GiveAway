@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:give_away/pages/map/custom_map.dart';
-import 'package:give_away/pages/login_register.dart';
-import 'package:give_away/pages/home_page.dart';
+import 'package:give_away/pages/error_page.dart';
 import 'package:flutter/services.dart';
 import 'package:give_away/pages/main_page.dart';
-import 'package:give_away/pages/map/find_route_form.dart';
+import 'package:give_away/pages/map/custom_map.dart';
 
 void main() async {
   await dotenv.load(fileName: "assets/.env");
@@ -13,6 +12,10 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.black),
   );
+
+  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+    return const ErrorPage();
+  };
 
   runApp(MaterialApp(
       home: Theme(
@@ -40,6 +43,6 @@ void main() async {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-        child: const LoginRegister(),
-      )));
+    child: const MainPage(),
+  )));
 }

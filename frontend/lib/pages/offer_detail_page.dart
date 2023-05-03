@@ -93,9 +93,9 @@ class OfferDetailPage extends StatelessWidget {
                           fontSize: 16,
                           color: Colors.black54,
                         )),
-                    const Text(
-                      "666 666 666",
-                      style: TextStyle(
+                     Text(
+                      offer.phoneNumber,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.black54,
                       ),
