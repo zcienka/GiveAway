@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:give_away/pages/login_register.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/Offer.dart';
@@ -48,6 +49,12 @@ class _MainPageState extends State<MainPage> {
     if (response.statusCode == 200) {
       return Offer.fromJsonArray(jsonDecode(response.body));
     } else {
+      if (response.statusCode == 401) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginRegister()),
+        );
+      }
       throw Exception(jsonDecode(response.body));
     }
   }

@@ -40,7 +40,6 @@ void main() async {
         bodyColor: const Color(0xff0F0F0F),
       ),
     ),
-        // child: const CustomMap("Poznań", destinationCityName:"Wrocław"),
-        child: Register(),
+        child: const LoginRegister(),
       )));
 }

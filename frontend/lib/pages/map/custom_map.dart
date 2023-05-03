@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 
+import '../login_register.dart';
+
 class CustomMap extends StatefulWidget {
   final String startingPointCityName;
   final String? destinationCityName;
@@ -63,6 +65,12 @@ class _CustomMapState extends State<CustomMap> {
 
           return LatLng(latitude, longitude);
         }
+      }
+      if (response.statusCode == 401) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginRegister()),
+        );
       }
       throw Exception(jsonDecode(response.body));
     }

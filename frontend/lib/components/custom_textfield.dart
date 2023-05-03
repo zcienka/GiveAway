@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final String fieldName;
   final TextEditingController controller;
+  final bool isPassword;
 
   const CustomTextField(
-      {super.key, required this.fieldName, required this.controller});
+      {super.key,
+      required this.fieldName,
+      required this.controller,
+      required this.isPassword});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,7 @@ class CustomTextField extends StatelessWidget {
                 ))),
         TextField(
             controller: controller,
+            obscureText: isPassword,
             style: const TextStyle(fontSize: 16),
             decoration: InputDecoration(
               filled: true,
