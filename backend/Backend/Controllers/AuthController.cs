@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
-    [Route("api/auth/")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {

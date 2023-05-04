@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +20,10 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
         });
 });
-
-var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(conn));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
 

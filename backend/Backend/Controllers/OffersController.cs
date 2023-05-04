@@ -8,12 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Models;
 using System.Collections;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.CodeAnalysis;
 
 namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OffersController : Controller
     {
         private readonly ApplicationDbContext _context;
